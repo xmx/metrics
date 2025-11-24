@@ -37,6 +37,8 @@ type PushOptions struct {
 	// By default the Method is GET.
 	Method string
 
+	Client *http.Client
+
 	// Optional WaitGroup for waiting until all the push workers created with this WaitGroup are stopped.
 	WaitGroup *sync.WaitGroup
 }
@@ -325,7 +327,10 @@ func newPushContext(pushURL string, opts *PushOptions) (*pushContext, error) {
 	}
 
 	pushURLRedacted := pu.Redacted()
-	client := &http.Client{}
+	client := opts.Client
+	if client == nil {
+		client = &http.Client{}
+	}
 	return &pushContext{
 		pushURL:            pu,
 		method:             method,
